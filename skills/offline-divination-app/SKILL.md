@@ -75,7 +75,7 @@ python scripts/scaffold.py <目标目录> --title 我的占卜  # 需要骨架�
 
 体检会拦：外部 URL / CDN 引用、`node_modules` 混入产物、AGPL 依赖、缺失的本地 vendor、隐私风险写法。
 
-打包 Capactior 流程、构建脚本坑位，见 `references/packaging.md`。
+打包 Capacitor 流程、构建脚本坑位，见 `references/packaging.md`。
 
 ## 三条不可妥协的红线
 
