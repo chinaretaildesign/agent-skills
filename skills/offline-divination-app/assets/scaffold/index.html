@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#faf8f5">
+<title>__APP_TITLE__</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <h1 class="nav-title">__APP_TITLE__</h1>
+  <p class="nav-sub">用塔罗，看清一段合作关系</p>
+</nav>
+
+<main class="main">
+
+  <!-- 输入区 -->
+  <section id="formPanel" class="panel">
+    <div class="field">
+      <label for="nameA">你的名字</label>
+      <input id="nameA" type="text" placeholder="你">
+    </div>
+    <div class="field">
+      <label for="nameB">对方名字</label>
+      <input id="nameB" type="text" placeholder="合作伙伴">
+    </div>
+
+    <div class="spread-switch">
+      <button class="spread-btn active" data-spread="partnership">合作契合 · 6 张</button>
+      <button class="spread-btn" data-spread="decision">快速决策 · 3 张</button>
+    </div>
+
+    <button id="drawBtn" class="primary">开始占卜</button>
+    <p class="hint">全部计算在本机完成，不联网、不上传。</p>
+  </section>
+
+  <!-- 结果区 -->
+  <section id="resultPanel" class="panel hidden">
+    <div id="scoreBox" class="score-box"></div>
+    <div id="cards" class="cards"></div>
+    <div id="summary" class="summary"></div>
+    <button id="againBtn" class="ghost">再占一次</button>
+  </section>
+
+</main>
+
+<!-- 加载顺序不可调换：数据 → 引擎 → 主控 -->
+<script src="assets/js/data/tarot.js"></script>
+<script src="assets/js/data/spreads.js"></script>
+<script src="assets/js/engine/divination.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+/* ============================================================
+ * 骨架样式：克制的移动端风格
+ * 要点：安全区、按压即时反馈、3D 翻牌、暗色与减少动效适配
+ * ============================================================ */
+:root {
+  --bg: #faf8f5;
+  --panel: rgba(255, 255, 255, 0.72);
+  --text: #1a1a1e;
+  --sub: #6b6b73;
+  --line: rgba(0, 0, 0, 0.08);
+  --accent: #6b5b95;
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+/* ---------- 顶部导航（毛玻璃） ---------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: max(14px, env(safe-area-inset-top)) 20px 14px;
+  background: var(--panel);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--line);
+}
+.nav-title {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+.nav-sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--sub);
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 主体 ---------- */
+.main { padding: 20px 18px; max-width: 560px; margin: 0 auto; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--sub);
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+.field input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 160ms ease;
+}
+.field input:focus { border-color: var(--accent); }
+
+/* ---------- 按钮 ---------- */
+.spread-switch { display: flex; gap: 8px; margin: 18px 0; }
+.spread-btn {
+  flex: 1;
+  padding: 10px 8px;
+  font-size: 13px;
+  color: var(--sub);
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  transition: transform 120ms ease, background 160ms ease, color 160ms ease;
+}
+.spread-btn.active {
+  color: #fff;
+  background: var(--accent);
+  border-color: transparent;
+}
+
+button { cursor: pointer; font-family: inherit; }
+button.pressed { transform: scale(0.97); }
+
+.primary {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 14px;
+  transition: transform 120ms ease, opacity 160ms ease;
+}
+.ghost {
+  width: 100%;
+  margin-top: 18px;
+  padding: 13px;
+  font-size: 15px;
+  color: var(--sub);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.hint {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--sub);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- 结果 ---------- */
+.score-box { text-align: center; padding: 8px 0 20px; }
+.score-num {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.tone-great { color: #2e7d5b; }
+.tone-good  { color: #3f7f9e; }
+.tone-fair  { color: #9a7b2f; }
+.tone-warn  { color: #b06a2c; }
+.tone-bad   { color: #a4453f; }
+
+.score-level { margin-top: 8px; font-size: 15px; font-weight: 600; }
+.score-headline { margin-top: 4px; font-size: 14px; color: var(--sub); }
+.score-names { margin-top: 10px; font-size: 12px; color: var(--sub); }
+
+/* 3D 翻牌 */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 8px 0 18px;
+}
+.card {
+  aspect-ratio: 3 / 4.4;
+  padding: 0;
+  background: none;
+  border: none;
+  perspective: 800px;
+}
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.card.flipped .card-inner { transform: rotateY(180deg); }
+.card-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-back {
+  background: linear-gradient(160deg, #6b5b95, #3d3557);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 22px;
+}
+.card-front {
+  background: #fff;
+  border: 1px solid var(--line);
+  transform: rotateY(180deg);
+  text-align: center;
+}
+.card-label { font-size: 10px; color: var(--sub); letter-spacing: 0.02em; }
+.card-name { font-size: 13px; font-weight: 600; }
+.card-kw { font-size: 10px; color: var(--sub); line-height: 1.3; }
+
+/* 逐条解读 */
+.summary-text {
+  margin: 0 0 14px;
+  padding: 14px;
+  font-size: 14px;
+  line-height: 1.65;
+  background: rgba(107, 91, 149, 0.07);
+  border-radius: 12px;
+}
+.card-list { display: flex; flex-direction: column; gap: 10px; }
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.row:last-child { border-bottom: none; }
+.row b { font-size: 12px; color: var(--accent); letter-spacing: 0.02em; }
+.row span { font-size: 13px; line-height: 1.6; color: var(--text); }
+
+.hidden { display: none !important; }
+
+/* ---------- 暗色 ---------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0e12;
+    --panel: rgba(28, 28, 34, 0.72);
+    --text: #ececf0;
+    --sub: #9a9aa4;
+    --line: rgba(255, 255, 255, 0.1);
+    --accent: #8e7cc3;
+  }
+  .card-front { background: #1c1c22; }
+  .field input { background: rgba(255, 255, 255, 0.05); }
+  .summary-text { background: rgba(142, 124, 195, 0.14); }
+}
+
+/* ---------- 减少动效 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

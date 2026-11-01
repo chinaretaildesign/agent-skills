@@ -21,6 +21,7 @@ cp -r agent-skills/skills/<skill-name> <工作区>/.workbuddy/skills/   # 项目
 | Skill | 用途 | 触发示例 | 依赖 |
 | --- | --- | --- | --- |
 | [skill-finder](skills/skill-finder/) | 到 GitHub 等市场搜寻符合需求的现成 skill，评估后推荐安装 | 「帮我找一个能读取抖音视频内容的 skill」 | Python 3.10+；无需凭证（设 `GITHUB_TOKEN` 可提高限额） |
+| [offline-divination-app](skills/offline-divination-app/) | 从零搭建可离线运行、可打包上架的占卜类 App（塔罗抽牌 + 牌阵解读 + 五行合参），含离线体检与骨架生成脚本 | 「做一个占卜 App」「要能离线在手机上用」「开发塔罗占卜工具」 | Python 3.8+（脚本）；无第三方包 |
 
 ## 我要上架一个新的 skill
 
