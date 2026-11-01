@@ -20,7 +20,7 @@ cp -r agent-skills/skills/<skill-name> <工作区>/.workbuddy/skills/   # 项目
 
 | Skill | 用途 | 触发示例 | 依赖 |
 | --- | --- | --- | --- |
-| _（暂无，等待上架）_ | | | |
+| [skill-finder](skills/skill-finder/) | 到 GitHub 等市场搜寻符合需求的现成 skill，评估后推荐安装 | 「帮我找一个能读取抖音视频内容的 skill」 | Python 3.10+；无需凭证（设 `GITHUB_TOKEN` 可提高限额） |
 
 ## 我要上架一个新的 skill
 
