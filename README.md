@@ -22,6 +22,7 @@ cp -r agent-skills/skills/<skill-name> <工作区>/.workbuddy/skills/   # 项目
 | --- | --- | --- | --- |
 | [skill-finder](skills/skill-finder/) | 到 GitHub 等市场搜寻符合需求的现成 skill，评估后推荐安装 | 「帮我找一个能读取抖音视频内容的 skill」 | Python 3.10+；无需凭证（设 `GITHUB_TOKEN` 可提高限额） |
 | [offline-divination-app](skills/offline-divination-app/) | 从零搭建可离线运行、可打包上架的占卜类 App（塔罗抽牌 + 牌阵解读 + 五行合参），含离线体检与骨架生成脚本 | 「做一个占卜 App」「要能离线在手机上用」「开发塔罗占卜工具」 | Python 3.8+（脚本）；无第三方包 |
+| [koubo-video-pipeline](skills/koubo-video-pipeline/) | 黄耀贤（台湾老黄）口播短视频生产线：选题查重→豆包写稿→真声逐句变速配音→讲解型渲染→Wan2.2 S2V 数字人开场拼装，默认产出数字人开场+讲解型正文 4:3 成片 | 「跑一条口播」「出个口播视频」「老黄口播」「生鲜超市口播」 | Python 3.11+；本地需 ComfyUI+Fish Audio+火山方舟运行时（非 pip 包），pip 仅 `requests` |
 
 ## 我要上架一个新的 skill
 
