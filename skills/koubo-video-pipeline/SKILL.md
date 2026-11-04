@@ -31,7 +31,9 @@ agent_created: true
   - 查重：`H:\daijia-short-video\topic_guard.py`
   - 渲染：`H:\daijia-short-video\build_template.py`
   - S2V 开场生成：`H:\comfy-flux\gen_hook_s2v.py`
-  - 拼装：`H:\daijia-short-video\build_with_hook.py`
+  - 拼装（4:3）：`H:\daijia-short-video\build_with_hook.py`
+  - 拼装（9:16 竖版）：`H:\daijia-short-video\build_with_hook_9x16.py`
+  - 竖版模板：`H:\daijia-short-video\template\template_9x16.json`
   - 选题台账：`H:\daijia-short-video\topics.json`
   - 视觉质检：`python /h/tools/vision.py <帧> --ask "..."`
 - **代理坑**：所有外部 API（ark/fish）走脚本内置清代理；ComfyUI 是本地 127.0.0.1，curl 时设 `proxies={"http":None}` 或 `--noproxy 127.0.0.1`。
@@ -88,11 +90,20 @@ cd /h/daijia-short-video && python build_template.py \
 ```
 
 ### Step 5 · 数字人开场（S2V）+ 拼装
-1. 取 manifest 第 1 段 `end` 作为 Hook 时长 `HOOK_SEC`（I004 实测 6.162s）。
-2. `gen_hook_s2v.py` 内部已切前 `HOOK_SEC` 秒配音→97 帧@16fps→480×832→输出 `ComfyUI/output/hook_s2v_00001-audio.mp4`。如要通用，改脚本 `HOOK_SEC` 为读 manifest 或加 `--hook-sec` 参数。
-3. **⏸ 暂停点**：抽帧 `ffmpeg -ss 3 -i hook_s2v...mp4 -frames:v 1 f.png` → `python /h/tools/vision.py f.png --ask "有无扭曲变形/质量打分"` 确认无变形（合格线 7+ 分）。
-4. 拼装：`cd /h/daijia-short-video && python build_with_hook.py`（数字人段放大补暗边成 4:3 → drawtext 叠 hero 标题/姓名/AI 角标 → 正文取现有成片 `HOOK_SEC` 之后 → 整条音频用 `vo_<选题>.wav` 全长对齐）。
-5. 成品：`H:\daijia-short-video\out\<选题>_4x3_真声_数字人开场.mp4`
+
+**⏱ 渲染耗时（RTX 4070 12GB，低显存模式，实测）**：约 15s/帧 —— 97 帧=380s，130 帧=1950s（32 分钟）。
+**⚠️ 开场时长硬上限 5 秒**：8 秒开场要渲半小时，性价比极低。确需更长开场，先把分辨率降到 320×576。
+
+1. 取 manifest 第 1 段 `end` 作为 Hook 时长 `HOOK_SEC`（`gen_hook_s2v.py --manifest` 会自动读，无需手填）。
+2. `gen_hook_s2v.py` 切前 `HOOK_SEC` 秒配音 → 帧数取 `8n+1`（16fps）→ 480×832 → 输出 `ComfyUI/output/<prefix>_00001-audio.mp4`。
+   - 通用调用：`python gen_hook_s2v.py --audio vo_x.wav --manifest vo_x.json --out-prefix hook_x`
+   - 9:16 竖版同样适用：数字人 480×832 等比缩放 1080×1920，几乎无损，比横版少一道补边。
+3. **⏸ 暂停点**：抽帧 `ffmpeg -ss 3 -i <hook>.mp4 -frames:v 1 f.png` → `python /h/tools/vision.py f.png --ask "有无扭曲变形/质量打分"` 确认无变形（合格线 7+ 分）。
+4. 拼装（**二选一**）：
+   - 4:3 横版：`python build_with_hook.py --hook ... --body ... --audio ... --manifest ... --title1 ... --title2 ... --out ...`
+   - 9:16 竖版：`python build_with_hook_9x16.py --hook ... --body ... --audio ... --hook-sec <实际段长> --title1 ... --title2 ... --out ...`
+   - 竖版正文渲染用 `--template template/template_9x16.json`（右上大圆窗 300px + 名牌条，content 区 560–1670，字幕 margin_bottom=169）
+5. 成品：`H:\daijia-short-video\out\<选题>_<画幅>_数字人开场.mp4`
 
 ### Step 6 · 收尾质检 + 台账
 - 抽帧查关键页（首/中/尾）有无文字溢出、遮挡、变形。
@@ -108,7 +119,9 @@ cd /h/daijia-short-video && python build_template.py \
 - 数字人段原生 480p 放大到 1080 偏软 → 待 SeedVR2 超分（仓库已排）。
 - ComfyUI 后台进程会被会话中断杀掉 → 重跑先探测重启。
 - `gen_hook_s2v.py` / `build_with_hook.py` 已参数化：`--hook-sec` / `--manifest`（自动读第1段 end）/ `--title1 --title2` / `--out` / `--body` / `--audio`，换选题直接传参无需改码。
-- 长稿豆包请求偶发 SIGTERM → 用 prompt-file 后台规避（已验证）。
+- 长稿豆包请求偶发 SIGTERM / ReadTimeout → 用 prompt-file + 后台通道跑；先发小请求探连通再发长稿（已验证）。
+- **S2V 渲染是全流程最慢一环**（8 秒开场 = 32 分钟）→ 开场压到 4–5 秒，或降分辨率到 320×576；别为等渲染干耗时间。
+- ComfyUI 冷启动扫模型盘要 30s+，短轮询未必够；探测本地端口必须带 `--noproxy '*'`（本机代理会拦 localhost）。
 
 ## 维护
 - 新增选题角度 → 先登记 `topics.json`（防查重撞车）。
